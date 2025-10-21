@@ -1,0 +1,56 @@
+# PaddleOCR Configuration
+ocr:
+  # Language settings
+  lang: 'en'  # Supported: en, ch, french, german, korean, japan, etc.
+  
+  # Detection settings
+  det_model_dir: null  # Use default model if null
+  det_db_thresh: 0.3    # Threshold for text detection
+  det_db_box_thresh: 0.6  # Threshold for bounding box
+  
+  # Recognition settings
+  rec_model_dir: null  # Use default model if null
+  rec_batch_num: 6
+  
+  # System settings
+  use_gpu: false
+  use_angle_cls: true  # Enable angle classification for rotated text
+  
+# PDF Processing
+pdf:
+  dpi: 300  # Resolution for PDF to image conversion
+  first_page: null  # Process from first page (null = all pages)
+  last_page: null   # Process to last page (null = all pages)
+
+# Output settings
+output:
+  save_visualization: true
+  save_json: true
+  output_dir: 'output'
+  visualization_color: [0, 255, 0]  # BGR format - Green boxes
+
+# Box Mapping Configuration
+# Define how bounding boxes map to structured fields
+# The system will sort boxes and assign them to fields based on position
+box_mapping:
+  mode: 'sequential'  # Options: 'sequential', 'positional', 'custom'
+  
+  # Sequential mode: Assign boxes in reading order (top to bottom, left to right)
+  sequential_fields:
+    - 'firstName'
+    - 'lastName'
+    - 'email'
+    - 'phone'
+    - 'address'
+    - 'city'
+    - 'zipCode'
+  
+  # Positional mode: Define regions and assign fields based on position
+  positional_mapping:
+    # Example: Define regions as [x_min, y_min, x_max, y_max] percentages
+    firstName:
+      region: [0, 0, 0.5, 0.2]  # Top-left quadrant
+    lastName:
+      region: [0.5, 0, 1.0, 0.2]  # Top-right quadrant
+    email:
+      region: [0, 0.2, 1.0, 0.4]  # Second row full width
