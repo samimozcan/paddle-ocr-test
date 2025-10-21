@@ -5,7 +5,7 @@ Provides utilities to visualize OCR results with bounding boxes.
 """
 
 import os
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont

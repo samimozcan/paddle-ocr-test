@@ -5,7 +5,7 @@ This module handles mapping of detected bounding boxes to structured fields.
 Supports sequential and positional mapping strategies.
 """
 
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 import logging
 
 logger = logging.getLogger(__name__)

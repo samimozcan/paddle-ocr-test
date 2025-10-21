@@ -6,7 +6,7 @@ Supports processing single or multiple pages.
 """
 
 import os
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict
 from PIL import Image
 import logging
 try:

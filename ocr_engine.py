@@ -37,18 +37,26 @@ class OCREngine:
         # Initialize PaddleOCR with configuration
         # Note: PaddleOCR will download models on first run
         logger.info("Initializing PaddleOCR engine...")
-        self.ocr = PaddleOCR(
-            lang=ocr_config.get('lang', 'en'),
-            use_gpu=ocr_config.get('use_gpu', False),
-            use_angle_cls=ocr_config.get('use_angle_cls', True),
-            det_model_dir=ocr_config.get('det_model_dir'),
-            rec_model_dir=ocr_config.get('rec_model_dir'),
-            det_db_thresh=ocr_config.get('det_db_thresh', 0.3),
-            det_db_box_thresh=ocr_config.get('det_db_box_thresh', 0.6),
-            rec_batch_num=ocr_config.get('rec_batch_num', 6),
-            show_log=False
-        )
-        logger.info("OCR engine initialized successfully")
+        
+        # Determine device based on config
+        use_gpu = ocr_config.get('use_gpu', False)
+        device = 'gpu' if use_gpu else 'cpu'
+        
+        # Use simplified initialization to avoid segfaults on some systems
+        # Disable doc analysis which can cause issues on macOS
+        try:
+            self.ocr = PaddleOCR(
+                lang=ocr_config.get('lang', 'en'),
+                device=device,
+                use_angle_cls=False,  # Disable to avoid segfault
+                det_db_thresh=ocr_config.get('det_db_thresh', 0.3),
+                det_db_box_thresh=ocr_config.get('det_db_box_thresh', 0.6),
+                rec_batch_num=ocr_config.get('rec_batch_num', 6)
+            )
+            logger.info("OCR engine initialized successfully")
+        except Exception as e:
+            logger.error(f"Failed to initialize PaddleOCR: {e}")
+            raise
     
     def process_image(self, image_path: str) -> List[Dict]:
         """
@@ -65,7 +73,8 @@ class OCREngine:
         
         # Perform OCR on the image
         # Result format: [[[box], (text, confidence)], ...]
-        result = self.ocr.ocr(image_path, cls=True)
+        # Note: cls parameter removed in newer PaddleOCR versions
+        result = self.ocr.ocr(image_path)
         
         if not result or not result[0]:
             logger.warning(f"No text detected in {image_path}")
